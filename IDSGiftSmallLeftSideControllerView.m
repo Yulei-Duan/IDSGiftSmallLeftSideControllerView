@@ -44,23 +44,32 @@
         return;
     }
     if (_queenArray.count == 0) {
-        self.hidden = YES;
+        _playGifSwitch = NO;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (_leftViewDownPlaying) {
+                return;
+            }
+            if (_leftViewUpPlaying) {
+                return;
+            }
+            self.hidden = YES;
+        });
         return;
     }
     self.hidden = NO;
     _playGifSwitch = YES;
     if (_queenArray.count > 0) {
         if (!_leftViewUpPlaying) {
+            _playGifSwitch = NO;
             [self leftViewUpShow:_queenArray[_queenArray.count-1]];
             [_queenArray removeLastObject];
-        }
-        if (_queenArray.count == 0) {
-            _playGifSwitch = NO;
             return;
         }
         if (!_leftViewDownPlaying) {
+            _playGifSwitch = NO;
             [self leftViewDownShow:_queenArray[_queenArray.count-1]];
             [_queenArray removeLastObject];
+            return;
         }
     }
     _playGifSwitch = NO;
@@ -128,6 +137,7 @@
                 leftView.alpha = 0;
             } completion:^(BOOL finished) {
                 _leftViewDownPlaying = NO;
+                [self startPlay];
             }];
         });
     }];
